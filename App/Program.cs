@@ -1,6 +1,5 @@
 using App;
 using App.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +9,6 @@ builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(connecti
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<ICryptographyService, CryptographyService>();
-
-builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // Add services to the container.
 

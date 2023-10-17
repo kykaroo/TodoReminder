@@ -20,7 +20,7 @@ public class TodoController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SetTodo(string token, [FromBody] TodoItem item)
     {
-        if (!_tokenService.ValidateJwtToken(token, out var userName)) return BadRequest("Время авторизации истекло");
+        if (!_tokenService.ValidateJwtToken(token, out var userName)) return Forbid("Время аунтефикации истекло");
 
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -36,12 +36,8 @@ public class TodoController : ControllerBase
     [HttpGet]
     public IActionResult GetTodo(string token)
     {
-        if (!_tokenService.ValidateJwtToken(token, out var userName)) return BadRequest("Время авторизации истекло");
+        if (!_tokenService.ValidateJwtToken(token, out var userName)) return Forbid("Время аунтефикации истекло");
 
-        var user = _db.Users.First(u => u.UserName == userName); 
-        var items = new List<TodoItem>();
-        items.AddRange(_db.Items.Where(item => item.User == user));
-
-        return Ok(items); //TODO Какой формат отправлять в ответ?
+        return Ok(_db.Items.Where(item => item.User == _db.Users.First(u => u.UserName == userName))); //TODO Какой формат отправлять в ответ?
     }
 }

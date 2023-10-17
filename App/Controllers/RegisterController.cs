@@ -16,10 +16,9 @@ public class RegisterController : ControllerBase
         _db = db;
         _cryptographyService = cryptographyService;
     }
-
-    [Route("[controller]/[action]/{name}")]
+    
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromRoute] string name,[FromBody] string password)
+    public async Task<IActionResult> CreateUser(string name,[FromBody] string password)
     {
         if (_db.Users.Any(user => user.UserName == name)) return BadRequest($"Пользователь с именем {name} уже существует");
 

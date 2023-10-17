@@ -17,10 +17,9 @@ public class LoginController : ControllerBase
         _tokenService = tokenService;
         _cryptographyService = cryptographyService;
     }
-
-    [Route("[controller]/[action]/{name}")]
+    
     [HttpPost]
-    public string TryLogin([FromRoute] string name,[FromBody] string password)
+    public string TryLogin(string name,[FromBody] string password)
     {
         var user = _db.Users.FirstOrDefault(user => user.UserName == name);
         
