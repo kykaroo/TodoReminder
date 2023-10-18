@@ -13,5 +13,5 @@ public class TodoItem
     [DefaultValue(0)]
     public int Priority { get; set; }
     public DateTime CreationTime { get; set; } = DateTime.Now;
-    public DateTime? ExecutionTime { get; set; }
+    public DateTime? ExecutionTime { get; set; } = DateTime.Now;
 }

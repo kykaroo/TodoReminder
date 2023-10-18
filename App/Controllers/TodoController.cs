@@ -1,5 +1,7 @@
-﻿using App.Models;
+﻿using System.Linq.Expressions;
+using App.Models;
 using App.Services;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Controllers;
@@ -29,8 +31,22 @@ public class TodoController : ControllerBase
         user.TodoList.Add(item);
         _db.Items.Add(item);
         await _db.SaveChangesAsync();
+
+        
+
+        var executionTime = item.ExecutionTime == null
+            ? DateTime.Now + TimeSpan.FromHours(7) - DateTime.Now
+            : DateTime.Now - item.ExecutionTime.Value;
+
+        BackgroundJob.Schedule(SendNotification(item), executionTime);
         
         return Ok("Напоминание успешно создано");
+    }
+
+    private Expression<Action> SendNotification(TodoItem item)
+    {
+        //TODO отправка уведомлений
+        throw new NotImplementedException();
     }
 
     [HttpGet]
@@ -38,6 +54,6 @@ public class TodoController : ControllerBase
     {
         if (!_tokenService.ValidateJwtToken(token, out var userName)) return Forbid("Время аунтефикации истекло");
 
-        return Ok(_db.Items.Where(item => item.User == _db.Users.First(u => u.UserName == userName))); //TODO Какой формат отправлять в ответ?
+        return Ok(_db.Items.Where(item => item.User == _db.Users.First(u => u.UserName == userName)));
     }
 }
