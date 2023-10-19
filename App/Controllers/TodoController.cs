@@ -56,4 +56,20 @@ public class TodoController : ControllerBase
 
         return Ok(_db.Items.Where(item => item.User == _db.Users.First(u => u.UserName == userName)));
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteTodo(string token, [FromBody] int todoId)
+    {
+        if (!_tokenService.ValidateJwtToken(token, out var userName)) return Forbid("Время аунтефикации истекло");
+
+        var item = _db.Items.First(item => item.Id == todoId);
+
+        if (item.User != _db.Users.First(u => u.UserName == userName)) return BadRequest("Вы не являетесь владельцем данного напоминания");
+        
+        var text = item.Text;
+        _db.Remove(item);
+        await _db.SaveChangesAsync();
+
+        return Ok($"Напоминание \"{text}\" успешно удалено");
+    }
 }
